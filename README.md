@@ -2,6 +2,9 @@
 
 Rabbit R1 IMEI Generator is a JavaScript-based tool designed to generate and validate IMEI numbers for Rabbit R1 devices.
 
+## Live version
+[Click here to use the IMEI Generator](https://htmlpreview.github.io/?https://github.com/annabelsandford/rabbit-r1-imeigen/blob/main/imei_check_v1.html)
+
 ## How it Works
 
 ### IMEI Overview
