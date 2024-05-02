@@ -1,0 +1,100 @@
+<!--
+Rabbit R1 IMEI Generator
+Version 1.0
+
+A Javascript-based tool to generate and validate IMEI numbers for Rabbit R1 devices.
+
+Sabrina Sandford, 05/02/2024
+@annielunaire
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rabbit R1 IMEI Gen</title>
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<style>
+.container {
+    margin-top: 50px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <h1 class="text-left mb-4">Rabbit R1 IMEI Generator V1</h1>
+    <div class="form-group row">
+        <label for="imei" class="col-sm-2 col-form-label">Enter IMEI:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="imei" placeholder="Enter IMEI">
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-10 offset-sm-2">
+            <button type="button" class="btn btn-primary mr-2" onclick="validateIMEI()">Validate</button>
+            <button type="button" class="btn btn-success" onclick="generateIMEI()">Generate Valid IMEI</button>
+        </div>
+    </div>
+    <p id="result" class="text-center font-weight-bold"></p>
+    <ul id="imeiList" class="list-group mt-4"></ul>
+    <p style="color: gray;">@annielunaire // Sabrina Sandford 2024 - This program is open-source and provided for educational purposes only. You may use, modify, and distribute it under the terms of the GNU Affero General Public License v3.0 license. See the LICENSE file for details.</p>
+</div>
+
+<script>
+function validateIMEI() {
+    let imei = document.getElementById("imei").value.replace(/\D/g,'');
+    if (imei.length !== 15 || isNaN(imei)) {
+        document.getElementById("result").innerText = "Invalid IMEI";
+        return;
+    }
+
+    let imeiWithoutChecksum = imei.slice(0, -1);
+    let checksum = imei.slice(-1);
+    if (calculateChecksum(imeiWithoutChecksum) === checksum) {
+        document.getElementById("result").innerText = "Valid IMEI";
+    } else {
+        document.getElementById("result").innerText = "Invalid IMEI";
+    }
+}
+
+function calculateChecksum(imeiWithoutChecksum) {
+    let imeiArray = imeiWithoutChecksum.split('').map(Number);
+    let sum = 0;
+    let double = false;
+    for (let i = 0; i < imeiArray.length; i++) {
+        let digit = imeiArray[i];
+        if (double) {
+            digit *= 2;
+            if (digit > 9) {
+                digit -= 9;
+            }
+        }
+        sum += digit;
+        double = !double;
+    }
+    let checksum = (10 - (sum % 10)) % 10;
+    return String(checksum);
+}
+
+function generateIMEI() {
+    const TAC = "35847631";
+    const serialNumberPrefix = "00";
+    let serialNumber = serialNumberPrefix;
+    for (let i = 0; i < 4; i++) {
+        serialNumber += Math.floor(Math.random() * 10);
+    }
+    let imeiWithoutChecksum = TAC + serialNumber;
+    let checksum = calculateChecksum(imeiWithoutChecksum);
+    let generatedIMEI = imeiWithoutChecksum + checksum;
+    document.getElementById("imei").value = generatedIMEI;
+    document.getElementById("result").innerText = "";
+
+    let imeiList = document.getElementById("imeiList");
+    let listItem = document.createElement("li");
+    listItem.className = "list-group-item";
+    listItem.textContent = generatedIMEI;
+    imeiList.appendChild(listItem);
+}
+</script>
+</body>
+</html>
